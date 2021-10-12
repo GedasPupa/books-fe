@@ -78,12 +78,7 @@ export class BooksComponent implements OnInit {
         this.books = res;
         this.filteredBooks = this.books;
         this.dataLoaded = true;
-        for (const key in this.filteredBooks) {
-          if (!this.categories.includes(this.filteredBooks[key].category)) {
-            this.categories.push(this.filteredBooks[key].category);
-          }
-        }
-        console.log('CATEGORIES???', this.categories);
+        this.updateCategories();
       },
       (err) => {
         console.log(err);
@@ -102,6 +97,7 @@ export class BooksComponent implements OnInit {
           this.book = res;
           alert(`Book ${res.title} successfuly added to DB!`);
           this.getTotalBooks();
+          this.updateCategories();
         },
         (err) => console.log(err)
       );
@@ -122,6 +118,7 @@ export class BooksComponent implements OnInit {
         this.books = this.books.filter((b) => b.id !== id);
         this.filteredBooks = this.books;
         this.getTotalBooks();
+        this.updateCategories();
       },
       (err) => {
         console.log(err);
@@ -141,5 +138,14 @@ export class BooksComponent implements OnInit {
       (res) => (this.categoryCount = res.category_count),
       (err) => console.log(err)
     );
+  }
+
+  updateCategories(): void {
+    this.categories = [];
+    for (const key in this.filteredBooks) {
+      if (!this.categories.includes(this.filteredBooks[key].category)) {
+        this.categories.push(this.filteredBooks[key].category);
+      }
+    }
   }
 }
