@@ -21,7 +21,25 @@ import { NgForm } from '@angular/forms';
         Pages: <input type="number" min="1" max="999999" name="pages" />
       </div>
       <button type="submit" (click)="addBook()">Add</button>
+      <div class="summary">
+        <p>Total books: {{ totalBooks }}</p>
+        <label for="category">Select category: </label>
+        <select
+          [(ngModel)]="model"
+          id="category"
+          name="category"
+          (input)="onChange($event)"
+        >
+          <option *ngFor="let item of categories" [value]="item">
+            {{ item }}
+          </option>
+        </select>
+        <h5 *ngIf="!!model">
+          Total books by category "{{ model }}": {{ categoryCount }}
+        </h5>
+      </div>
     </form>
+
     <div class="books-list">
       <app-book
         *ngFor="let book of books"
@@ -35,6 +53,8 @@ import { NgForm } from '@angular/forms';
     '.newBook { padding: 50px; padding-top: 0; display: flex; flex-wrap: wrap; gap: 20px; }',
     'h6, form > p { display: inline-block; width: 100%; }',
     '.ng-invalid:not(form).ng-touched { border: 1px solid salmon; }',
+    'h5 {margin-top: 20px; margin-bottom: 20px;}',
+    'select { margin-left: 10px; }',
   ],
 })
 export class BooksComponent implements OnInit {
@@ -46,6 +66,10 @@ export class BooksComponent implements OnInit {
   dataLoaded: boolean = false;
   book!: IBook;
   formValid: boolean = true;
+  totalBooks: number = 0;
+  categories: string[] = [];
+  model: string | undefined;
+  categoryCount!: number;
 
   @ViewChild('newBook') newBook!: NgForm;
   ngOnInit(): void {
@@ -54,12 +78,19 @@ export class BooksComponent implements OnInit {
         this.books = res;
         this.filteredBooks = this.books;
         this.dataLoaded = true;
+        for (const key in this.filteredBooks) {
+          if (!this.categories.includes(this.filteredBooks[key].category)) {
+            this.categories.push(this.filteredBooks[key].category);
+          }
+        }
+        console.log('CATEGORIES???', this.categories);
       },
       (err) => {
         console.log(err);
         this.dataLoaded = true;
       }
     );
+    this.getTotalBooks();
   }
 
   addBook() {
@@ -69,6 +100,8 @@ export class BooksComponent implements OnInit {
           this.books.push(res);
           this.filteredBooks = this.books;
           this.book = res;
+          alert(`Book ${res.title} successfuly added to DB!`);
+          this.getTotalBooks();
         },
         (err) => console.log(err)
       );
@@ -88,10 +121,25 @@ export class BooksComponent implements OnInit {
         );
         this.books = this.books.filter((b) => b.id !== id);
         this.filteredBooks = this.books;
+        this.getTotalBooks();
       },
       (err) => {
         console.log(err);
       }
+    );
+  }
+
+  getTotalBooks(): void {
+    this._booksService.getTotalBooks().subscribe(
+      (res) => (this.totalBooks = res.total_records),
+      (err) => console.log(err)
+    );
+  }
+
+  onChange($event: any): void {
+    this._booksService.getCountByCategory($event.target.value).subscribe(
+      (res) => (this.categoryCount = res.category_count),
+      (err) => console.log(err)
     );
   }
 }

@@ -29,11 +29,11 @@ export class BooksService {
     return this.http.put<IBook>(`http://localhost:3000/books/${book.id}`, book);
   }
 
-  // getRecordsSum(): Observable<any> {
-  //   return this.http.get<any>(`http://localhost:3000/sum`);
-  // }
+  getTotalBooks(): Observable<any> {
+    return this.http.get<any>(`http://localhost:3000/total`);
+  }
 
-  // getTotalMilk(): Observable<any> {
-  //   return this.http.get<any>(`http://localhost:3000/milk-sum`);
-  // }
+  getCountByCategory(category: string): Observable<any> {
+    return this.http.get<any>(`http://localhost:3000/category/${category}`);
+  }
 }

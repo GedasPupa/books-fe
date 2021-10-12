@@ -22,16 +22,16 @@ import { IBook } from 'src/app/models/Book';
       </div>
       <ul class="list-group list-group-flush">
         <li class="list-group-item">
-          Author: {{ bookFromParent.author }}
+          Author: {{ bookFromParent.author }} <br />
           <!-- <input name="id" value="{{ cowFromParent.id }}" ngModel /> -->
           <input name="author" ngModel />
         </li>
         <li class="list-group-item">
-          Category: {{ bookFromParent.category }}
+          Category: {{ bookFromParent.category }} <br />
           <input name="category" ngModel />
         </li>
         <li class="list-group-item">
-          Pages:<br />{{ bookFromParent.pages }}
+          Pages: {{ bookFromParent.pages }} <br />
           <input type="number" name="pages" ngModel />
         </li>
       </ul>
