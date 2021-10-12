@@ -30,6 +30,7 @@ import { NgForm } from '@angular/forms';
           name="category"
           (input)="onChange($event)"
         >
+          <option value="all">all</option>
           <option *ngFor="let item of categories" [value]="item">
             {{ item }}
           </option>
@@ -42,9 +43,10 @@ import { NgForm } from '@angular/forms';
 
     <div class="books-list">
       <app-book
-        *ngFor="let book of books"
+        *ngFor="let book of filteredBooks"
         [bookFromParent]="book"
         (onDelete1)="onDelete($event)"
+        (onUpdateInParent)="updateCategories()"
       ></app-book>
     </div>
   `,
@@ -134,10 +136,19 @@ export class BooksComponent implements OnInit {
   }
 
   onChange($event: any): void {
-    this._booksService.getCountByCategory($event.target.value).subscribe(
-      (res) => (this.categoryCount = res.category_count),
-      (err) => console.log(err)
-    );
+    if ($event.target.value === 'all') {
+      this.filteredBooks = this.books;
+    } else {
+      this._booksService.getCountByCategory($event.target.value).subscribe(
+        (res) => {
+          this.categoryCount = res.category_count;
+          this.filteredBooks = this.books.filter(
+            (b) => b.category === $event.target.value
+          );
+        },
+        (err) => console.log(err)
+      );
+    }
   }
 
   updateCategories(): void {

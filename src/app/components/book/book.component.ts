@@ -54,6 +54,7 @@ import { IBook } from 'src/app/models/Book';
 export class BookComponent implements OnInit {
   @Input() bookFromParent!: IBook;
   @Output() onDelete1: EventEmitter<number> = new EventEmitter<number>();
+  @Output() onUpdateInParent: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('oneBookInfo') oneBookInfo!: NgForm;
   book!: IBook;
 
@@ -84,6 +85,7 @@ export class BookComponent implements OnInit {
       },
       (err) => console.log(err)
     );
+    this.onUpdateInParent.emit();
   }
 
   onDelete(id: number): void {
